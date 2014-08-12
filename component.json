@@ -1,0 +1,5 @@
+{
+  "name": "playlister",
+  "paths": ["component"],
+  "local": ["boot"]
+}
