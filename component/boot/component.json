@@ -1,10 +1,10 @@
 {
   "name": "boot",
   "description": "",
-  "dependencies": {},
+  "dependencies": {
+    "visionmedia/debug": "*"
+  },
   "development": {},
   "main": "index.js",
-  "scripts": [
-    "index.js"
-  ]
+  "scripts": ["index.js"]
 }

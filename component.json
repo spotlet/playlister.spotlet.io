@@ -1,12 +1,5 @@
 {
   "name": "playlister",
-  "paths": [
-    "component"
-  ],
-  "local": [
-    "boot"
-  ],
-  "dependencies": {
-    "visionmedia/superagent": "*"
-  }
+  "paths": ["component"],
+  "local": ["boot"]
 }
