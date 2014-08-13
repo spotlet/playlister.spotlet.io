@@ -1,14 +1,7 @@
-<!doctype html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>Playlister</title>
-    <script type="text/javascript" charset="utf-8" src="main.js"></script>
-  </head>
-  <body>
-    <header>BEEP</header>
-    <section id="main">
-    </section>
-    <script type="text/javascript" charset="utf-8"> require('boot'); </script>
-  </body>
-</html>
+<% content_for :title do %>
+  Welcome!
+<% end %>
+
+<% if !@user %>
+  <a href="/auth/spotify">Sign In with Spotify</a>
+<% end %>

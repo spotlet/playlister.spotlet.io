@@ -1,0 +1,9 @@
+<% content_for :title do %>
+  Recently Added Tracks
+<% end %>
+
+<ul>
+  <% @user.saved_tracks(limit: 50).each do |track| %>
+    <li>"<%= track.name %>" by <%= track.artists[0].name %> added <%= track.other.added_at %></li>
+  <% end %>
+</ul>
