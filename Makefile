@@ -14,9 +14,9 @@ component: $(COMPONENTS)
 .PHONY: $(COMPONENTS)
 $(COMPONENTS):
 	$(COMPONENT) install
-	$(COMPONENT) build -o public/ -n $(BUILD_NAME)
+	$(COMPONENT) build -o site/public/ -n $(BUILD_NAME)
 
 clean:
-	rm -f public/$(BUILD_NAME)*
+	rm -f site/public/$(BUILD_NAME)*
 	rm -rf components/
 	rm -rf node_modules/
