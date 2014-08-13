@@ -1,0 +1,16 @@
+{
+  "name": "recently-added",
+  "description": "",
+  "dependencies": {},
+  "development": {},
+  "main": "index.js",
+  "scripts": [
+    "index.js"
+  ],
+  "templates": [
+    "template.html"
+  ],
+  "styles": [
+    "recently-added.css"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "header",
+  "description": "",
+  "dependencies": {
+    "visionmedia/debug": "*"
+  },
+  "development": {},
+  "main": "index.js",
+  "scripts": [
+    "index.js"
+  ],
+  "templates": [
+    "template.html"
+  ],
+  "styles": [
+    "header.css"
+  ]
+}

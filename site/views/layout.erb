@@ -3,13 +3,12 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title>Playlister - <%= yield_content :title %></title>
-    <script type="text/javascript" charset="utf-8" src="main.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/main.js"></script>
+    <link rel="stylesheet" href="/animate.min.css" type="text/css" />
+    <link rel="stylesheet" href="/main.css" type="text/css" />
   </head>
   <body>
-    <header><%= yield_content :title %></header>
-    <section id="main">
-        <%= yield %>
-    </section>
-    <script type="text/javascript" charset="utf-8"> require('boot'); </script>
+    <section id="main" class="animated fadeIn"> <%= yield %> </section>
+    <script type="text/javascript" charset="utf-8"> var pl = require('boot'); </script>
   </body>
 </html>

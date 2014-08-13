@@ -2,9 +2,23 @@
   "name": "boot",
   "description": "",
   "dependencies": {
-    "visionmedia/debug": "*"
+    "component/dom": "*",
+    "component/dialog": "*",
+    "component/popover": "*",
+    "component/tip": "*",
+    "visionmedia/debug": "*",
+    "visionmedia/batch": "*",
+    "visionmedia/superagent": "*",
+    "ded/domready": "*",
+    "isner/style-reset": "*",
+    "FortAwesome/Font-Awesome": "*"
   },
   "development": {},
   "main": "index.js",
-  "scripts": ["index.js"]
+  "scripts": ["index.js"],
+  "styles": ["boot.css"],
+  "local": [
+    "header", "page", "home", "api",
+    "user", "dashboard", "recently-added"
+  ]
 }

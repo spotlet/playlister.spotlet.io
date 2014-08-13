@@ -1,0 +1,19 @@
+{
+  "name": "dashboard",
+  "description": "",
+  "dependencies": {
+    "moment/moment": "*",
+    "yields/search": "*"
+  },
+  "development": {},
+  "main": "index.js",
+  "scripts": [
+    "index.js"
+  ],
+  "templates": [
+    "template.html"
+  ],
+  "styles": [
+    "dashboard.css"
+  ]
+}

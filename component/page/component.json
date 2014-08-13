@@ -1,0 +1,16 @@
+{
+  "name": "page",
+  "description": "",
+  "dependencies": {},
+  "development": {},
+  "main": "index.js",
+  "scripts": [
+    "index.js"
+  ],
+  "templates": [
+    "template.html"
+  ],
+  "styles": [
+    "page.css"
+  ]
+}

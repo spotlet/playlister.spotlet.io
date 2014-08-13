@@ -3,6 +3,7 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'sinatra/content_for'
 require 'sinatra/namespace'
+require 'sinatra/json'
 require 'dalli'
 require 'rack/session/dalli'
 
@@ -22,8 +23,6 @@ set :session, true
 
 enable :sessions
 
-recentlyAddedQueue = Playlister::MessageQueue::RecentlyAdded.new
-
 configure do
   use Rack::Session::Dalli, cache: Dalli::Client.new
 
@@ -34,7 +33,7 @@ end
 
 helpers do
   def logged_in?
-    session['display_name'] != nil
+    session['id'] != nil
   end
 
   def force_logged_in
@@ -47,6 +46,10 @@ end
 before do
   if logged_in?
     @user = Playlister::Spotify::User.new session.to_hash
+
+    # Playlister::Spotify::User.refresh_token_me(@user.id)
+    # rescue RestClient::BadRequest => e
+      # puts e.inspect
   end
 end
 
@@ -61,7 +64,7 @@ get '/auth/spotify/callback' do
   # Save the whole sure hash to the session
   session.update user.to_hash
 
-  redirect '/tracks/recently_added'
+  redirect '/'
 end
 
 get '/tracks/recently_added' do
@@ -70,8 +73,46 @@ end
 
 namespace '/api' do
   namespace '/v1' do
-    get '/trigger/recently_added' do
-      recentlyAddedQueue.send session.to_hash
+    namespace '/user' do
+      get '/verify' do
+        json :status => logged_in?
+      end
+
+      post '/logout' do
+        session.destroy
+
+        json :status => session['id'] == nil
+      end
+
+      namespace '/playlist' do
+        post '/recently_added/:action' do |action|
+          recentlyAddedQueue = Playlister::MessageQueue::RecentlyAdded.new
+
+          valid_actions = %w{trigger enable disable}
+
+          recentlyAddedQueue.send({:execute => action, :payload => session.to_hash})
+          json :status => true
+        end
+
+        get '/recently_added/:action' do |action|
+          valid_actions = %w{list status}
+
+          unless valid_actions.index(action)
+            halt 404
+          end
+
+          case action
+            when 'list'
+              tracks = @user.saved_tracks_json(limit: 50)['items']
+              return json({:status => true, :data => tracks})
+
+            when 'status'
+              recentlyAddedCollection = Playlister::DatabaseCollection::RecentlyAdded.new @user
+              return json({:status => true, :data => recentlyAddedCollection.to_hash})
+
+          end
+        end
+      end
     end
   end
 end

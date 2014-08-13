@@ -9,12 +9,8 @@ app: component
 
 .PHONY: component
 component: $(COMPONENTS)
-
-
-.PHONY: $(COMPONENTS)
-$(COMPONENTS):
 	$(COMPONENT) install
-	$(COMPONENT) build -o site/public/ -n $(BUILD_NAME)
+	$(COMPONENT) build --dev -o site/public/ -n $(BUILD_NAME)
 
 clean:
 	rm -f site/public/$(BUILD_NAME)*

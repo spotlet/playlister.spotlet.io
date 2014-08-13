@@ -1,0 +1,130 @@
+
+#dashboard {
+  width: 90%;
+  margin: 0 auto;
+}
+
+#dashboard .module {
+  display: inline-block;
+  position: relative;
+  vertical-align: top;
+  width: 100%;
+  margin: 30px 15px 0;
+  padding: 20px 0;
+  background-color: rgba(0,0,0,0.75);
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 0px;
+}
+
+#dashboard .module h1 {
+  font-weight: 100;
+  font-size: 300%;
+  text-align: center;
+  color: #fff;
+}
+
+#dashboard .module .control {
+  padding: 20px;
+}
+
+#dashboard .module .control > *:not(:last-child) {
+  margin-right: 10px;
+}
+
+#dashboard .module .control button,
+#dashboard .module .control .enable {
+  cursor: pointer;
+  padding-bottom: 10px;
+  border: none;
+  border-bottom: 2px rgba(129, 185, 0, 1) solid;
+  color: #fff;
+  font-size: 125%%;
+  text-transform: uppercase;
+  background: transparent;
+}
+
+#dashboard .module .control .search {
+  display: inline-block;
+  position: relative;
+  width: 30%;
+  padding: 10px;
+  border-radius: 20px;
+  border: none;
+}
+
+#dashboard .module.recently-added {
+}
+
+#dashboard .module.recently-added ul {
+  padding: 20px;
+}
+
+#dashboard .module.recently-added ul li {
+  padding: 15px 5px;
+  font-size: 20px;
+  font-weight: 100;
+  color: #fff;
+}
+
+#dashboard .module.recently-added ul li.show {
+  display: list-item;
+}
+
+#dashboard .module.recently-added ul li.hide {
+  display: none;
+}
+
+#dashboard .module.recently-added ul li a {
+  display: block;
+  width: 100%;
+  color: #fff;
+}
+
+#dashboard .module.recently-added ul li a img {
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  margin-right: 10px;
+  margin-left: 10px;
+  border: 1px solid #362F2F;
+  border-radius: 2px;
+}
+
+#dashboard .module.recently-added ul li a span {
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  width: 70%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+#dashboard .module.recently-added ul li:nth-child(odd) {
+  background: rgba(129, 185, 0, 0.25);
+}
+
+#dashboard .module.recently-added ul li:nth-child(odd):hover {
+  background: rgba(129, 185, 0, 0.50);
+}
+
+#dashboard .module.recently-added ul li:nth-child(even):hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+#dashboard .module.recently-added ul li.empty {
+  font-size: 25px;
+  font-weight: 200;
+  text-align: center;
+}
+
+#dashboard .module.recently-added ul li .added {
+  display: inline-block;
+  position: absolute;
+  right: 30px;
+  margin-top: -30px;
+  font-size: 16px;
+  font-weight: 300;
+  color: #fff;
+}
