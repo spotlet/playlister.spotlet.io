@@ -14,8 +14,7 @@ set :bind, '0.0.0.0'
 set :port, 80
 set :server, 'thin'
 set :public_folder, 'public'
-# set :session_secret, '`d*-OYv.[(j,&{3VtU&kg4{)O4h8T94~J5Js^Y_?{2aM.5S_N.cmWaX%S$l9=ke%'
-set :session_secret, 'thisIsThie290ierewSkjfdsNNskksOOpp11'
+set :session_secret, '`d*-OYv.[(j,&{3VtU&kg4{)O4h8T94~J5Js^Y_?{2aM.5S_N.cmWaX%S$l9=ke%'
 set :session, true
 
 enable :sessions
@@ -30,7 +29,7 @@ end
 
 helpers do
     def logged_in?
-        session[:display_name] != nil
+        session['display_name'] != nil
     end
 
     def force_logged_in
@@ -40,9 +39,15 @@ helpers do
     end
 end
 
+before do
+    if logged_in?
+        @user = RSpotify::User.new session.to_hash
+    end
+end
+
 # Home page
 get '/' do
-    'Yup, you made it here'
+    erb :index
 end
 
 get '/auth/spotify/callback' do
@@ -55,8 +60,5 @@ get '/auth/spotify/callback' do
 end
 
 get '/test' do
-    puts session.inspect
-
-    user = RSpotify::User.new session.to_hash
-    puts user.saved_tracks.first.inspect
+    @user.saved_tracks.first.inspect.to_s
 end
