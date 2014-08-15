@@ -56,22 +56,6 @@ module Playlister
     end
 
     class User < RSpotify::User
-      # def refresh_token
-        # request_body = {
-          # grant_type: 'refresh_token',
-          # refresh_token: @credentials['refresh_token']
-        # }
-        # begin
-          # response = RestClient.post(RSpotify::TOKEN_URI, request_body, RSpotify.send(:auth_header))
-        # rescue RestClient::BadRequest => e
-          # puts e.inspect
-        # end
-# puts response.inspect
-        # json = JSON.parse(response)
-# puts json.inspect
-        # @credentials = json
-      # end
-
       def playlist(id)
         url = "users/#{@id}/playlists/#{id}"
         RSpotify::Playlist.new User.oauth_get(@id, url)

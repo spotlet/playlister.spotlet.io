@@ -47,9 +47,9 @@ before do
   if logged_in?
     @user = Playlister::Spotify::User.new session.to_hash
 
-    # Playlister::Spotify::User.refresh_token_me(@user.id)
-    # rescue RestClient::BadRequest => e
-      # puts e.inspect
+    # Always update the user collection to have the latest access_token
+    userModel = Playlister::Model::Users.new
+    userModel.update @user
   end
 end
 
@@ -60,9 +60,11 @@ end
 
 get '/auth/spotify/callback' do
   user = Playlister::Spotify::User.new(request.env['omniauth.auth'])
+  userModel = Playlister::Model::Users.new
 
   # Save the whole sure hash to the session
   session.update user.to_hash
+  userModel.add user
 
   redirect '/'
 end
@@ -107,8 +109,8 @@ namespace '/api' do
               return json({:status => true, :data => tracks})
 
             when 'status'
-              recentlyAddedCollection = Playlister::DatabaseCollection::RecentlyAdded.new @user
-              return json({:status => true, :data => recentlyAddedCollection.to_hash})
+              recentlyAddedModel = Playlister::Model::User::RecentlyAdded.new @user
+              return json({:status => true, :data => recentlyAddedModel.to_hash})
 
           end
         end
