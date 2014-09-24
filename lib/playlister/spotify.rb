@@ -4,7 +4,42 @@ require 'rspotify'
 
 RSpotify.authenticate('4e39daff82e041eb819aa4f1a146980b', 'fa9ab3fa1a0a4fff95510374912fbc80')
 
+module RestClient
+  def self.delete(url, payload='', headers={}, &block)
+    Request.execute(:method => :delete, :url => url, :payload => payload, :headers => headers, &block)
+  end
+end
+
 module RSpotify
+  class Album
+      def to_hash
+        hash = {}
+        instance_variables.each do |var|
+          hash[var.to_s.delete('@')] = instance_variable_get(var)
+        end
+        hash
+      end
+  end
+
+  class Track
+      def to_hash
+        hash = {}
+        instance_variables.each do |var|
+          hash[var.to_s.delete('@')] = instance_variable_get(var)
+        end
+        hash
+      end
+  end
+
+  class Artist
+    def albums(limit: 20, offset: 0)
+      json = RSpotify.get("artists/#{@id}/albums?limit=#{limit}&offset=#{offset}")
+      @albums = json['items'].map { |a| Album.new a }
+
+      { :albums => @albums, :next => json['next'], :total => json['total'] }
+    end
+  end
+
   class Playlist
     def set_tracks!(tracks, position: nil)
       if tracks.size > 100
@@ -19,6 +54,39 @@ module RSpotify
       User.oauth_put(@owner.id, url, {})
       @tracks = nil
       tracks
+    end
+
+    def delete_tracks!(tracks)
+      tracks_data = { :tracks => [] }
+      tracks_data[:tracks] = tracks.map { |x| {:uri => x.uri} }
+
+      url = "users/#{@owner.id}/playlists/#{@id}/tracks"
+
+      User.oauth_delete(@owner.id, url, tracks_data.to_json)
+    end
+
+    def update_recently_saved(saved_tracks)
+      saved_tracks_uris = saved_tracks.map(&:uri)
+
+      current_tracks = tracks
+      current_tracks_uris = current_tracks.map(&:uri)
+
+      songs_add_uris = saved_tracks_uris.map { |x| x unless current_tracks_uris.include?(x) }
+      songs_add_uris.compact!
+
+      songs_add = saved_tracks.map { |x| x if songs_add_uris.include?(x.uri) }
+      songs_add.compact!
+
+      songs_delete_uris = current_tracks_uris.map { |x| x unless saved_tracks_uris.include?(x) }
+      songs_delete_uris.compact!
+
+      songs_delete = current_tracks.map { |x| x if songs_delete_uris.include?(x.uri) }
+      songs_delete.compact!
+
+      delete_tracks! songs_delete
+      add_tracks! songs_add
+
+      saved_tracks
     end
 
     # Returns a hash containing all user attributes

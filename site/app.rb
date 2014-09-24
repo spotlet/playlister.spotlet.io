@@ -17,7 +17,7 @@ require_relative '../lib/playlister'
 set :bind, '0.0.0.0'
 set :port, 80
 set :server, 'thin'
-set :public_folder, 'public'
+set :public_folder, 'site/public'
 set :session_secret, '`d*-OYv.[(j,&{3VtU&kg4{)O4h8T94~J5Js^Y_?{2aM.5S_N.cmWaX%S$l9=ke%'
 set :session, true
 
@@ -73,8 +73,26 @@ get '/tracks/recently_added' do
   erb :track_listing
 end
 
+get '/test' do
+end
+
 namespace '/api' do
   namespace '/v1' do
+    namespace '/artist' do
+      namespace '/playlist' do
+
+        get '/all_songs/:artist' do |artist|
+          allSongsQueue = Playlister::MessageQueue::AllSongs.new
+
+
+          allSongsQueue.send({:artist => artist, :payload => session.to_hash})
+          json :status => true
+        end
+
+      end
+
+    end
+
     namespace '/user' do
       get '/verify' do
         json :status => logged_in?
@@ -87,10 +105,11 @@ namespace '/api' do
       end
 
       namespace '/playlist' do
+        valid_actions = %w{trigger enable disable}
+
         post '/recently_added/:action' do |action|
           recentlyAddedQueue = Playlister::MessageQueue::RecentlyAdded.new
 
-          valid_actions = %w{trigger enable disable}
 
           recentlyAddedQueue.send({:execute => action, :payload => session.to_hash})
           json :status => true

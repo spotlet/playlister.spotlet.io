@@ -27,7 +27,7 @@ recentlyAddedQueue.queue.subscribe(:block => true) do |delivery_info, metadata, 
         playlist = user.create_playlist!('Recently Saved')
         recentlyAddedModel.save playlist.id
       end
-      recentlyAddedModel.data.playlist.set_tracks! user.saved_tracks(limit: 50)
+      recentlyAddedModel.data.playlist.update_recently_saved user.saved_tracks(limit: 50)
 
     when 'enable'
       unless recentlyAddedModel.exists?

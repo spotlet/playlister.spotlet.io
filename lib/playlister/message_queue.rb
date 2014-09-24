@@ -38,5 +38,13 @@ module Playlister
         super('recently_added')
       end
     end
+
+    class AllSongs < Base
+      attr_reader :name
+
+      def initialize
+        super('all_songs')
+      end
+    end
   end
 end
