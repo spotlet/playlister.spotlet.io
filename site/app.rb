@@ -15,7 +15,7 @@ require_relative '../lib/playlister'
 
 # Sinatra setup
 set :bind, '0.0.0.0'
-set :port, 80
+set :port, 8080
 set :server, 'thin'
 set :public_folder, 'site/public'
 set :session_secret, '`d*-OYv.[(j,&{3VtU&kg4{)O4h8T94~J5Js^Y_?{2aM.5S_N.cmWaX%S$l9=ke%'
@@ -129,7 +129,7 @@ namespace '/api' do
 
             when 'status'
               recentlyAddedModel = Playlister::Model::User::RecentlyAdded.new @user
-              return json({:status => true, :data => recentlyAddedModel.to_hash})
+              return json({:status => recentlyAddedModel.data.enabled})
 
           end
         end

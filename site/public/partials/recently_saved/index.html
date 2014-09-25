@@ -1,0 +1,31 @@
+<h1>Recently Saved</h1>
+
+<p>This will create and maintain a playlist of the last 50 songs you added you "Your Music"</p>
+
+<form role="form">
+   <div class="checkbox">
+    <label>
+      <input type="checkbox" ng-model="isChecked" ng-click="trigger()"> Enable here <small class="type-info">Disable anytime</small>
+    </label>
+  </div>
+</form>
+
+<h3>Tracks</h3>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>Track</th>
+      <th>Artist(s)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="track in tracks">
+      <td>{{track.track.name}}</td>
+      <td>
+        <span ng-repeat="artist in track.track.artists">
+          <a href="">{{artist.name}}</a>,
+        </span>
+      </td>
+    </tr>
+  </tbody>
+</table>
