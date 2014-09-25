@@ -21,6 +21,10 @@ playlister.directive('activeLink', ['$location', function(location) {
 
 playlister.config(['$routeProvider', function($routeProvider) {
   $routeProvider.
+    when('/', {
+      templateUrl: '/partials/home.html',
+      controller: 'HomePageCtrl'
+    }).
     when('/recently_saved', {
       templateUrl: '/partials/recently_saved/index.html',
       controller: 'RecentlySavedPageCtrl'
@@ -30,6 +34,10 @@ playlister.config(['$routeProvider', function($routeProvider) {
     })
   ;
 }]);
+
+playlister.controller('HomePageCtrl', function ($scope) {
+
+});
 
 playlister.controller('SignedInCtrl', function ($scope, $http) {
   $http.get('/api/v1/user/verify').success(function (data) {
