@@ -29,6 +29,10 @@ playlister.config(['$routeProvider', function($routeProvider) {
       templateUrl: '/partials/recently_saved/index.html',
       controller: 'RecentlySavedPageCtrl'
     }).
+    when('/all_songs', {
+      templateUrl: '/partials/all_songs/index.html',
+      controller: 'AllSongsPageCtrl'
+    }).
     otherwise({
       redirectTo: '/'
     })
@@ -36,6 +40,34 @@ playlister.config(['$routeProvider', function($routeProvider) {
 }]);
 
 playlister.controller('HomePageCtrl', function ($scope) {
+
+});
+
+playlister.controller('AllSongsPageCtrl', function ($scope, $http) {
+  $scope.artistName = '';
+  $scope.artists = [];
+
+  $scope.makePlaylist = function (artistName) {
+    $http.get('/api/v1/artist/playlist/all_songs/'+artistName).success(function (data) {
+      $scope.artistName = '';
+      $scope.artists = [];
+      alert('Your playlist has been queued for creation!');
+    });
+  };
+
+  $scope.searchArtists = function() {
+    if ($scope.artistName.length < 1) {
+      $scope.artists = [];
+      return;
+    }
+
+    $http.get('/api/v1/artist/search/'+$scope.artistName).success(function (data) {
+      $scope.artists = [];
+      angular.forEach(data.data, function (value, key) {
+        $scope.artists.push(value[0]);
+      });
+    });
+  };
 
 });
 

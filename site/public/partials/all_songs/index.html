@@ -1,0 +1,28 @@
+<h1>All Songs Playlist <small>One artist, one playlist, every song, ever.</small></h1>
+
+<p>There will be more features coming. Right now it will simply make a playlist with every song the artist is listed as an artist on.  This would include any appearances on other artists music.</p>
+
+<h3>Instructions</h3>
+<ol>
+  <li>Type in an artists name</li>
+  <li>Click on the name of the artist you want.</li>
+  <li>Your playlist has been queued for creation! It will be done soon!</li>
+</ol>
+
+<form role="form">
+  <div class="form-group">
+    <label for="artistName" class="sr-only">Email address</label>
+    <input type="text" class="form-control" id="artistName" placeholder="Enter artist name" ng-model="artistName" ng-change="searchArtists()">
+  </div>
+</form>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Results</h3>
+  </div>
+  <div class="panel-body">
+    <ul>
+      <li ng-repeat="artist in artists"><a href="" ng-click="makePlaylist(artist)">{{artist}}</a></li>
+    </ul>
+  </div>
+</div>

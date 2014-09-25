@@ -79,6 +79,15 @@ end
 namespace '/api' do
   namespace '/v1' do
     namespace '/artist' do
+
+      get '/search/:name' do |name|
+        artists = RSpotify::Artist.search(name)
+
+        artist_names = artists.map { |x| [x.name, x.uri] }
+
+        json :data => artist_names
+      end
+
       namespace '/playlist' do
 
         get '/all_songs/:artist' do |artist|

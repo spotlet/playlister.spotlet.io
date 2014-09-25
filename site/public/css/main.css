@@ -17,6 +17,10 @@ body {
   float: left;
 }
 
+.nav a {
+  color: #A0A1A4;
+}
+
 /*
  * Sidebar
  */
