@@ -21,6 +21,14 @@ body {
   color: #A0A1A4;
 }
 
+.panels {
+  margin-top: 20px;
+}
+
+.thumbnail {
+  border: none;
+}
+
 /*
  * Sidebar
  */

@@ -1,5 +1,20 @@
 var playlister = angular.module('playlister', ['ngRoute']);
 
+playlister.filter('ellipse', function() {
+  return function (input, limit) {
+    input = input || '';
+    limit = limit || 20;
+
+    var shortVersion = input.slice(0, limit);
+
+    if (shortVersion.length < input.length) {
+      shortVersion = shortVersion + '...';
+    }
+
+    return shortVersion;
+  };
+});
+
 playlister.directive('activeLink', ['$location', function(location) {
    return {
      restrict: 'A',
@@ -33,6 +48,10 @@ playlister.config(['$routeProvider', function($routeProvider) {
       templateUrl: '/partials/all_songs/index.html',
       controller: 'AllSongsPageCtrl'
     }).
+    when('/all_songs/:artist', {
+      templateUrl: '/partials/all_songs/index.html',
+      controller: 'AllSongsPageCtrl'
+    }).
     otherwise({
       redirectTo: '/'
     })
@@ -43,8 +62,8 @@ playlister.controller('HomePageCtrl', function ($scope) {
 
 });
 
-playlister.controller('AllSongsPageCtrl', function ($scope, $http) {
-  $scope.artistName = '';
+playlister.controller('AllSongsPageCtrl', function ($scope, $http, $route, $routeParams, $log) {
+  $scope.artistName = $routeParams.artist || '';
   $scope.artists = [];
 
   $scope.makePlaylist = function (artistName) {
@@ -55,7 +74,7 @@ playlister.controller('AllSongsPageCtrl', function ($scope, $http) {
     });
   };
 
-  $scope.searchArtists = function() {
+  $scope.searchArtists = function () {
     if ($scope.artistName.length < 1) {
       $scope.artists = [];
       return;
@@ -64,10 +83,22 @@ playlister.controller('AllSongsPageCtrl', function ($scope, $http) {
     $http.get('/api/v1/artist/search/'+$scope.artistName).success(function (data) {
       $scope.artists = [];
       angular.forEach(data.data, function (value, key) {
-        $scope.artists.push(value[0]);
+        for (i in value.images) {
+          if (value.images[i].height <= 300) {
+            smallImage = value.images[i];
+            break;
+          }
+        }
+        var artist = { name: value.name, image: smallImage }
+        $scope.artists.push(artist);
       });
     });
   };
+
+  $scope.$watch('artistName', function() {
+    $scope.searchArtists();
+    // $route.updateParams({artist: $scope.artistName});
+  });
 
 });
 
@@ -124,7 +155,4 @@ playlister.controller('SidebarLinksCtrl', function ($scope, $location, $rootScop
     }
   });
 
-  $rootScope.$on('$viewContentLoaded', function() {
-    }
-  );
 });
