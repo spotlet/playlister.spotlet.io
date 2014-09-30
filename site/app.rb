@@ -168,6 +168,10 @@ namespace '/api' do
             halt 404
           end
 
+          unless logged_in?
+            return json({:status => false, :reason => 'not-logged-in'})
+          end
+
           case action
             when 'list'
               tracks = @user.saved_tracks_json(limit: 50)['items']
