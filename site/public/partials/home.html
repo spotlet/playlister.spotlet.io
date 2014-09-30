@@ -1,1 +1,14 @@
-<h1>Welcome to Playlister!</h1>
+<div class="jumbotron">
+  <h1>Welcome to Playlister!</h1>
+  <p>Experts in editing/modifying/creating Spotify playlists</p>
+
+  <div class="row" ng-controller="SidebarLinksCtrl">
+    <div class="col-md-4" ng-repeat="link in sidebarLinks" ng-if="link.homepage">
+      <h2>{{link.name}}</h2>
+      <p>{{link.desc}}</p>
+      <p>
+        <a class="btn btn-primary" role="button" href="/#{{link.url}}">Go Now!</a>
+      </p>
+    </div>
+  </div>
+</div>

@@ -169,9 +169,18 @@ playlister.controller('ClonerPageCtrl', function ($scope, $http) {
 playlister.controller('SidebarLinksCtrl', function ($scope, $location, $rootScope) {
   $scope.sidebarLinks = [
     { name: 'Home', url: '/' },
-    { name: 'Recently Saved', url: '/recently_saved' },
-    { name: 'All Artist Songs', url: '/all_songs' },
-    { name: 'Cloner', url: '/cloner' },
+    {
+      name: 'Recently Saved', url: '/recently_saved', homepage: true,
+      desc: 'Build and maintain a playlist of the last 50 tracks added to "Your Music"'
+    },
+    {
+      name: 'All Artist Songs', url: '/all_songs', homepage: true,
+      desc: 'Build a playlist of every song by an artist, inclucing "Appears On" tracks'
+    },
+    {
+      name: 'Cloner', url: '/cloner', homepage: true,
+      desc: 'Duplicate any playlist so you can add/remove songs to it yourself'
+    },
   ];
 
   angular.forEach($scope.sidebarLinks, function(value, key) {
