@@ -52,17 +52,20 @@ playlister.config(['$routeProvider', function($routeProvider) {
       templateUrl: '/partials/all_songs/index.html',
       controller: 'AllSongsPageCtrl'
     }).
+    when('/cloner', {
+      templateUrl: '/partials/cloner/index.html',
+      controller: 'ClonerPageCtrl'
+    }).
     otherwise({
       redirectTo: '/'
     })
   ;
 }]);
 
-playlister.controller('HomePageCtrl', function ($scope) {
-
+playlister.controller('HomePageCtrl', function ($scope, $http, $log) {
 });
 
-playlister.controller('AllSongsPageCtrl', function ($scope, $http, $route, $routeParams, $log) {
+playlister.controller('AllSongsPageCtrl', function ($scope, $http, $route, $routeParams, $log, $location) {
   $scope.artistName = $routeParams.artist || '';
   $scope.artists = [];
 
@@ -97,12 +100,16 @@ playlister.controller('AllSongsPageCtrl', function ($scope, $http, $route, $rout
 
   $scope.$watch('artistName', function() {
     $scope.searchArtists();
+    // $location.path('/all_songs/'+$scope.artistName);
     // $route.updateParams({artist: $scope.artistName});
   });
 
 });
 
 playlister.controller('SignedInCtrl', function ($scope, $http) {
+
+  $scope.signedIn = false;
+
   $http.get('/api/v1/user/verify').success(function (data) {
     if (data.status) {
       $scope.signedInStatus = 'Sign Out';
@@ -113,6 +120,9 @@ playlister.controller('SignedInCtrl', function ($scope, $http) {
       $scope.faClass = 'sign-in';
       $scope.path = '/auth/spotify';
     }
+
+    $scope.signedIn = data.status;
+    $scope.userId = data.id;
 
     $scope.show_state = true;
   });
@@ -142,11 +152,26 @@ playlister.controller('RecentlySavedPageCtrl', function ($scope, $http) {
   };
 });
 
+playlister.controller('ClonerPageCtrl', function ($scope, $http) {
+  $scope.playlistId = '';
+  $scope.result = {};
+
+  $scope.clonePlaylist = function () {
+    if ($scope.playlistId.length < 6) { return; }
+
+    $http.post('/api/v1/cloner/clone?playlist='+$scope.playlistId).success(function (data) {
+      console.log(data);
+      $scope.result = data.results;
+    });
+  }
+});
+
 playlister.controller('SidebarLinksCtrl', function ($scope, $location, $rootScope) {
   $scope.sidebarLinks = [
     { name: 'Home', url: '/' },
     { name: 'Recently Saved', url: '/recently_saved' },
     { name: 'All Artist Songs', url: '/all_songs' },
+    { name: 'Cloner', url: '/cloner' },
   ];
 
   angular.forEach($scope.sidebarLinks, function(value, key) {

@@ -7,6 +7,10 @@ require 'sinatra/json'
 require 'dalli'
 require 'rack/session/dalli'
 
+require 'open-uri'
+require 'net/http'
+require 'enumerator'
+
 # Vendor: other
 require 'rspotify'
 
@@ -78,6 +82,35 @@ end
 
 namespace '/api' do
   namespace '/v1' do
+    post '/cloner/clone' do
+      origPlaylist = RSpotify::Playlist.find_by_id params['playlist']
+
+      newPlaylist = @user.create_playlist!(origPlaylist.name)
+
+      offset = 0
+      tracks = origPlaylist.tracks(limit: 100, offset: offset)
+
+      # So if there is no more, it wont run
+      while tracks[:next] != nil do
+        newPlaylist.add_tracks!(tracks[:results])
+
+        offset = offset + 100
+        tracks = origPlaylist.tracks(limit: 100, offset: offset)
+      end
+      # This takes care of the final page, or single page results
+      newPlaylist.add_tracks!(tracks[:results])
+
+      json :results => newPlaylist.to_hash
+    end
+
+    namespace '/player' do
+      get '/csrf' do
+        open('https://playlister.spotilocal.com:4371/simplecsrf/token.json', 'Origin' => 'https://embed.spotify.com') { |f|
+          f.each_line {|line| p line}
+        }
+      end
+    end
+
     namespace '/artist' do
 
       get '/search/:name' do |name|
@@ -104,7 +137,11 @@ namespace '/api' do
 
     namespace '/user' do
       get '/verify' do
-        json :status => logged_in?
+        json({
+          :status => logged_in?,
+          :user => logged_in? ? @user.display_name : '',
+          :id => logged_in? ? @user.id : ''
+        })
       end
 
       post '/logout' do

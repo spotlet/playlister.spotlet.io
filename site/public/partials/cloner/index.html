@@ -1,0 +1,23 @@
+<h1>Cloner <small>Duplicate any playlist</small></h1>
+
+<p>Have you ever loved a playlist you follow, but wanted to add songs to it to make it even better?</p>
+
+<p>Using our patent pending Cloner, you can now do just that!</p>
+
+<p>Just input one of the two formats below from any playlist.</p>
+<ul>
+  <li>Spotify URI: spotify:user:spotify:playlist:3IWEp81rnAsLo5Z4DferTi</li>
+  <li>Spotify URL: http://open.spotify.com/user/spotify/playlist/3IWEp81rnAsLo5Z4DferTi</li>
+</ul>
+
+<div class="alert alert-success" role="alert" ng-if="result.external_urls">Yaay! Check out your new playlist <a href="{{result.external_urls.spotify}}">"{{result.name}}"</a></div>
+
+<form role="form">
+  <div class="input-group">
+    <span class="input-group-addon"><i class="fa fa-search"></i></span>
+    <input type="text" class="form-control" id="playlistId" placeholder="Spotify URI/URL" ng-model="playlistId" />
+    <span class="input-group-btn">
+      <button class="btn btn-primary" type="button" ng-click="clonePlaylist()">Clone!</button>
+    </span>
+  </div>
+</form>

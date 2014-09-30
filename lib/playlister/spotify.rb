@@ -41,6 +41,44 @@ module RSpotify
   end
 
   class Playlist
+    def self.find_by_id(spotifyId)
+      if spotifyId[/open.spotify.com/] != nil
+        spotifyId.gsub!(/(http|https):\/\/open.spotify.com\//, '')
+        spotifyId.gsub!(/\//, ':')
+      elsif spotifyId[/spotify:/] != nil
+        spotifyId.gsub!(/^spotify:/, '')
+      end
+
+      spotifyParams = {}
+
+      parts = spotifyId.split ':'
+      parts.each_index do |i|
+        if i % 2 == 0
+          spotifyParams[parts[i]] = ''
+        else
+          spotifyParams[parts[i-1]] = parts[i]
+        end
+      end
+
+      Playlist.find spotifyParams['user'], spotifyParams['playlist']
+    end
+
+    def tracks(limit: 100, offset: 0)
+      last_track = offset + limit - 1
+      if @tracks_cache && last_track < 100
+        return @tracks_cache[offset..last_track]
+      end
+
+      url = "users/#{@owner.id}/playlists/#{@id}/tracks" \
+            "?limit=#{limit}&offset=#{offset}"
+
+      json = RSpotify.auth_get(url)
+
+      tracks = json['items'].map { |i| Track.new i['track'] }
+      @tracks_cache = tracks if limit == 100 && offset == 0
+      { :results => tracks, :next => json['next'], :limit => json['limit'] }
+    end
+
     def set_tracks!(tracks, position: nil)
       if tracks.size > 100
         warn 'Too many tracks requested. Maximum: 100'

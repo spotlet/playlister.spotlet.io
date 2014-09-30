@@ -37,6 +37,7 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right" ng-controller="SignedInCtrl">
+            <li ng-if="signedIn"><p class="navbar-text">{{userId}}</p></li>
             <li ng-show="show_state"><a href="{{path}}">{{signedInStatus}} <i class='fa fa-{{faClass}}'></i></a></li>
           </ul>
         </div>
