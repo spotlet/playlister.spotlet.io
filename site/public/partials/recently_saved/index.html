@@ -1,14 +1,16 @@
 <h1 class="page-header">Recently Saved</h1>
 
+<div ng-controller="SignedInCtrl">
 <div class="alert alert-warning" role="alert" ng-if="!signedIn">
   <a class="alert-link" href="/auth/spotify">Sign In</a> now to be able to use this great feature!
+</div>
 </div>
 
 <p>This will create and maintain a playlist of the last 50 songs you added you "Your Music"</p>
 
 <form role="form">
    <div class="checkbox">
-    <label>
+    <label ng-controller="SignedInCtrl">
       <input ng-disabled="!signedIn" type="checkbox" ng-model="isChecked" ng-click="trigger()"> Enable here <small class="type-info">Disable anytime</small>
     </label>
   </div>

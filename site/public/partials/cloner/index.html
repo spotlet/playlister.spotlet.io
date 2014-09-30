@@ -1,7 +1,9 @@
 <h1 class="page-header">Cloner <small>Duplicate any playlist</small></h1>
 
+<div ng-controller="SignedInCtrl">
 <div class="alert alert-warning" role="alert" ng-if="!signedIn">
   <a class="alert-link" href="/auth/spotify">Sign In</a> now to be able to use this great feature!
+</div>
 </div>
 
 <p>Have you ever loved a playlist you follow, but wanted to add songs to it to make it even better?</p>
@@ -21,9 +23,9 @@
 <form role="form">
   <div class="input-group">
     <span class="input-group-addon"><i class="fa fa-search"></i></span>
-    <input ng-disabled="!signedIn" type="text" class="form-control" id="playlistId" placeholder="Spotify URI/URL" ng-model="playlistId" />
+    <input type="text" class="form-control" id="playlistId" placeholder="Spotify URI/URL" ng-model="playlistId" />
     <span class="input-group-btn">
-      <button ng-disabled="!signedIn" class="btn btn-primary" type="button" ng-click="clonePlaylist()">Clone!</button>
+      <button class="btn btn-primary" type="button" ng-click="clonePlaylist()">Clone!</button>
     </span>
   </div>
 </form>
