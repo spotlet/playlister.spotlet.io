@@ -14,14 +14,16 @@
   <li>Spotify URL: http://open.spotify.com/user/spotify/playlist/3IWEp81rnAsLo5Z4DferTi</li>
 </ul>
 
-<div class="alert alert-success" role="alert" ng-if="result.external_urls">Yaay! Check out your new playlist <a class="alert-link" href="{{result.external_urls.spotify}}">"{{result.name}}"</a></div>
+<div class="alert alert-success" role="alert" ng-if="result.external_urls">
+  Yaay! Check out your new playlist <a class="alert-link" href="{{result.external_urls.spotify}}">"{{result.name}}"</a>
+</div>
 
 <form role="form">
   <div class="input-group">
     <span class="input-group-addon"><i class="fa fa-search"></i></span>
-    <input type="text" class="form-control" id="playlistId" placeholder="Spotify URI/URL" ng-model="playlistId" />
+    <input ng-disabled="!signedIn" type="text" class="form-control" id="playlistId" placeholder="Spotify URI/URL" ng-model="playlistId" />
     <span class="input-group-btn">
-      <button class="btn btn-primary" type="button" ng-click="clonePlaylist()">Clone!</button>
+      <button ng-disabled="!signedIn" class="btn btn-primary" type="button" ng-click="clonePlaylist()">Clone!</button>
     </span>
   </div>
 </form>

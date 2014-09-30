@@ -9,7 +9,7 @@
 <form role="form">
    <div class="checkbox">
     <label>
-      <input type="checkbox" ng-model="isChecked" ng-click="trigger()"> Enable here <small class="type-info">Disable anytime</small>
+      <input ng-disabled="!signedIn" type="checkbox" ng-model="isChecked" ng-click="trigger()"> Enable here <small class="type-info">Disable anytime</small>
     </label>
   </div>
 </form>

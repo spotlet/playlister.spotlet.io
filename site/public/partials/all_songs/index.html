@@ -16,7 +16,14 @@
 <form role="form">
   <div class="input-group">
     <span class="input-group-addon"><i class="fa fa-search"></i></span>
-    <input type="text" class="form-control" id="artistName" placeholder="Search for artist ..." ng-model="artistName">
+    <input
+      type="text"
+      class="form-control"
+      id="artistName"
+      placeholder="Search for artist ..."
+      ng-model="artistName"
+      ng-disabled="!signedIn"
+    >
   </div>
 </form>
 
