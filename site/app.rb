@@ -73,6 +73,12 @@ get '/auth/spotify/callback' do
   redirect '/'
 end
 
+get '/auth/sign_out' do
+  session['id'] = nil
+
+  redirect '/'
+end
+
 get '/tracks/recently_added' do
   erb :track_listing
 end
