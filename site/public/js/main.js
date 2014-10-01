@@ -110,7 +110,7 @@ playlister.controller('SignedInCtrl', function ($scope, $http) {
 
   $scope.signedIn = false;
 
-  $http.get('/api/v1/user/verify').success(function (data) {
+  $http.get('/status').success(function (data) {
     if (data.status) {
       $scope.signedInStatus = 'Sign Out';
       $scope.faClass = 'sign-out';

@@ -19,11 +19,18 @@ require_relative '../lib/playlister'
 
 # Sinatra setup
 set :bind, '0.0.0.0'
-set :port, 8080
 set :server, 'thin'
 set :public_folder, 'site/public'
 set :session_secret, '`d*-OYv.[(j,&{3VtU&kg4{)O4h8T94~J5Js^Y_?{2aM.5S_N.cmWaX%S$l9=ke%'
 set :session, true
+
+configure :production do
+  set :port, 80
+end
+
+configure :development do
+  set :port, 8080
+end
 
 enable :sessions
 
@@ -57,6 +64,10 @@ before do
   end
 end
 
+error 413 do
+  'Unauthorized'
+end
+
 # Home page
 get '/' do
   erb :index
@@ -83,7 +94,21 @@ get '/tracks/recently_added' do
   erb :track_listing
 end
 
+get '/status' do
+  json({
+    :status => logged_in?,
+    :user => logged_in? ? @user.display_name : '',
+    :id => logged_in? ? @user.id : ''
+  })
+end
+
 get '/test' do
+end
+
+before '/api/*' do
+  unless logged_in?
+    halt 401, json({ :status => false })
+  end
 end
 
 namespace '/api' do
@@ -142,19 +167,6 @@ namespace '/api' do
     end
 
     namespace '/user' do
-      get '/verify' do
-        json({
-          :status => logged_in?,
-          :user => logged_in? ? @user.display_name : '',
-          :id => logged_in? ? @user.id : ''
-        })
-      end
-
-      post '/logout' do
-        session.destroy
-
-        json :status => session['id'] == nil
-      end
 
       namespace '/playlist' do
         valid_actions = %w{trigger enable disable}
