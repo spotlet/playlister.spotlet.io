@@ -29,6 +29,10 @@ body {
   border: none;
 }
 
+.home-jumbotron {
+  padding-top: 0;
+}
+
 /*
  * Sidebar
  */
