@@ -62,10 +62,13 @@ playlister.config(['$routeProvider', function($routeProvider) {
   ;
 }]);
 
-playlister.controller('HomePageCtrl', function ($scope, $http, $log) {
+playlister.controller('HomePageCtrl', function ($scope, $http, $log, $rootScope) {
+  $rootScope.pageTitle = 'Home';
 });
 
-playlister.controller('AllSongsPageCtrl', function ($scope, $http, $route, $routeParams, $log, $location) {
+playlister.controller('AllSongsPageCtrl', function ($scope, $http, $route, $routeParams, $log, $location, $rootScope) {
+  $rootScope.pageTitle = 'All Songs';
+
   $scope.artistName = $routeParams.artist || '';
   $scope.artists = [];
 
@@ -128,7 +131,9 @@ playlister.controller('SignedInCtrl', function ($scope, $http) {
   });
 });
 
-playlister.controller('RecentlySavedPageCtrl', function ($scope, $http) {
+playlister.controller('RecentlySavedPageCtrl', function ($scope, $http, $rootScope) {
+  $rootScope.pageTitle = 'Recently Saved';
+
   $scope.isChecked = false;
 
   $http.get('/api/v1/user/playlist/recently_added/list').success(function (data) {
@@ -152,7 +157,9 @@ playlister.controller('RecentlySavedPageCtrl', function ($scope, $http) {
   };
 });
 
-playlister.controller('ClonerPageCtrl', function ($scope, $http) {
+playlister.controller('ClonerPageCtrl', function ($scope, $http, $rootScope) {
+  $rootScope.pageTitle = 'Cloner';
+
   $scope.playlistId = '';
   $scope.result = {};
 
