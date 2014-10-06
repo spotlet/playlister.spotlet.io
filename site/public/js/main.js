@@ -56,11 +56,19 @@ playlister.config(['$routeProvider', function($routeProvider) {
       templateUrl: '/partials/cloner/index.html',
       controller: 'ClonerPageCtrl'
     }).
+    when('/spotcast', {
+      templateUrl: '/partials/spotcast.html',
+      controller: 'SpotcastPageCtrl'
+    }).
     otherwise({
       redirectTo: '/'
     })
   ;
 }]);
+
+playlister.controller('SpotcastPageCtrl', function ($scope, $rootScope, $http, $log) {
+  $rootScope.pageTitle = 'SpotCast';
+});
 
 playlister.controller('HomePageCtrl', function ($scope, $http, $log, $rootScope) {
   $rootScope.pageTitle = 'Home';
@@ -69,11 +77,18 @@ playlister.controller('HomePageCtrl', function ($scope, $http, $log, $rootScope)
 playlister.controller('AllSongsPageCtrl', function ($scope, $http, $route, $routeParams, $log, $location, $rootScope) {
   $rootScope.pageTitle = 'All Songs';
 
+  $scope.filters = {
+    album: true,
+    single: true,
+    appears_on: true,
+    compilation: true
+  };
+
   $scope.artistName = $routeParams.artist || '';
   $scope.artists = [];
 
   $scope.makePlaylist = function (artistName) {
-    $http.get('/api/v1/artist/playlist/all_songs/'+artistName).success(function (data) {
+    $http({method: 'POST', url: '/api/v1/artist/playlist/all_songs/'+artistName, data: $.param({types: $scope.filters}), headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).success(function (data) {
       $scope.artistName = '';
       $scope.artists = [];
       alert('Your playlist has been queued for creation!');
@@ -176,6 +191,10 @@ playlister.controller('ClonerPageCtrl', function ($scope, $http, $rootScope) {
 playlister.controller('SidebarLinksCtrl', function ($scope, $location, $rootScope) {
   $scope.sidebarLinks = [
     { name: 'Home', url: '/' },
+    {
+      name: 'SpotCast', url: '/spotcast', homepage: true,
+      desc: 'This is the new Radio. Anyone can be a DJ and everyone can listen to human currated radio.'
+    },
     {
       name: 'Recently Saved', url: '/recently_saved', homepage: true,
       desc: 'Build and maintain a playlist of the last 50 tracks added to "Your Music"'

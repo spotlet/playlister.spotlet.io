@@ -18,6 +18,7 @@ allSongsQueue.queue.subscribe(:block => true) do |delivery_info, metadata, paylo
   data = JSON.parse payload
   data_artist  = data['artist']
   data_payload = data['payload']
+  data_types   = data['types']
 
   user = Playlister::Spotify::User.new data_payload
 
@@ -27,7 +28,7 @@ allSongsQueue.queue.subscribe(:block => true) do |delivery_info, metadata, paylo
   singles = []
   all_tracks = []
   offset = 0
-  albums = am.albums(limit: 50, offset: offset)
+  albums = am.albums(limit: 50, offset: offset, market: user.country, types: data_types)
   while albums[:next] != nil do
     albums[:albums].each do |album|
       singles << album

@@ -32,8 +32,12 @@ module RSpotify
   end
 
   class Artist
-    def albums(limit: 20, offset: 0)
-      json = RSpotify.get("artists/#{@id}/albums?limit=#{limit}&offset=#{offset}")
+    def albums(limit: 20, offset: 0, market: nil, types: nil)
+      uri = "artists/#{@id}/albums?limit=#{limit}&offset=#{offset}"
+      uri = uri + '&market=' + market if market
+      uri = uri + '&album_type=' + types.join(',') if types
+
+      json = RSpotify.get(uri)
       @albums = json['items'].map { |a| Album.new a }
 
       { :albums => @albums, :next => json['next'], :total => json['total'] }

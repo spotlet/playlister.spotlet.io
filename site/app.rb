@@ -153,12 +153,17 @@ namespace '/api' do
       end
 
       namespace '/playlist' do
-
         get '/all_songs/:artist' do |artist|
+          redirect '/#/all_songs'
+        end
+
+        post '/all_songs/:artist' do |artist|
           allSongsQueue = Playlister::MessageQueue::AllSongs.new
 
+          types = params['types']
+          types.delete_if { |k,v| v == "false" }
 
-          allSongsQueue.send({:artist => artist, :payload => session.to_hash})
+          allSongsQueue.send({:artist => artist, :payload => session.to_hash, :types => types})
           json :status => true
         end
 

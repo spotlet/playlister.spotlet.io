@@ -10,6 +10,15 @@
 </ol>
 
 <form role="form">
+  <div class="form-group">
+    <div class="checkbox">
+      <p>Source of the songs</p>
+      <label ng-repeat="(filterKey, filterValue) in filters">
+        <input type="checkbox" ng-model="filters[filterKey]"> {{filterKey}} &nbsp
+      </label>
+    </div>
+  </div>
+
   <div class="input-group">
     <span class="input-group-addon"><i class="fa fa-search"></i></span>
     <input
