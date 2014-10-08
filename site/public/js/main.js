@@ -15,6 +15,24 @@ playlister.filter('ellipse', function() {
   };
 });
 
+playlister.factory('requester', function ($window) {
+    var request = require('visionmedia/superagent');
+
+    return request;
+});
+
+playlister.factory('spotify', function ($q, $rootScope, requester) {
+    var playlocal = require('./playlocal/playlocal');
+    var playInstance = new playlocal(requester, $q);
+
+    $rootScope.spotifyInited = false;
+    playInstance.init().then(function () {
+        $rootScope.$emit('spotifyInited');
+    });
+
+    return playInstance;
+});
+
 playlister.directive('activeLink', ['$location', function(location) {
    return {
      restrict: 'A',
@@ -66,8 +84,60 @@ playlister.config(['$routeProvider', function($routeProvider) {
   ;
 }]);
 
-playlister.controller('SpotcastPageCtrl', function ($scope, $rootScope, $http, $log) {
+playlister.controller('SpotcastPageCtrl', function ($scope, $rootScope, $interval, spotify, $window) {
   $rootScope.pageTitle = 'SpotCast';
+
+  $scope.isPlaying = false;
+  $scope.trackLength = 0;
+  $scope.trackPosition = 0;
+  $scope.artist = {};
+  $scope.track = {};
+  $scope.album = {};
+  $scope.spotcaster = false;
+
+  $scope.enableFollow = function () {
+    console.log('enable follow');
+      $scope.socket = io('http://playlister.spotlet.io:3000');
+      $scope.socket.emit('join', 'solomonjames');
+      $scope.socket.on('spotcasting', function(data) {
+          $scope.isPlaying = data.playing;
+          $scope.trackLength = data.track.length;
+          $scope.trackPosition = data.playing_position;
+          $scope.percentComplete = (data.playing_position/data.track.length)*100;
+          $scope.artist = data.track.artist_resource;
+          $scope.artistName = data.track.artist_resource.name;
+          $scope.track = data.track.track_resource;
+          $scope.album = data.track.album_resource;
+      });
+  };
+
+  $scope.listRooms = function () {
+    // $scope.socket.emit('rooms'
+  };
+
+  $scope.enableSpotcaster = function () {
+    $scope.spotcaster = true;
+    $scope.socket = io('http://playlister.spotlet.io:3000');
+    $scope.socket.emit('join', 'solomonjames');
+  };
+
+  $scope.stopStatus = $interval(function () {
+      spotify.status().end(function (error, res) {
+
+          if ($scope.spotcaster) {
+              $scope.socket.emit('spotcasting', angular.extend(res.body, {username: $rootScope.username}));
+
+              $scope.isPlaying = res.body.playing;
+              $scope.trackLength = res.body.track.length;
+              $scope.trackPosition = res.body.playing_position;
+              $scope.percentComplete = (res.body.playing_position/res.body.track.length)*100;
+              $scope.artist = res.body.track.artist_resource;
+              $scope.artistName = res.body.track.artist_resource.name;
+              $scope.track = res.body.track.track_resource;
+              $scope.album = res.body.track.album_resource;
+          }
+      });
+  }, 1000);
 });
 
 playlister.controller('HomePageCtrl', function ($scope, $http, $log, $rootScope) {
@@ -124,7 +194,7 @@ playlister.controller('AllSongsPageCtrl', function ($scope, $http, $route, $rout
 
 });
 
-playlister.controller('SignedInCtrl', function ($scope, $http) {
+playlister.controller('SignedInCtrl', function ($scope, $http, $rootScope) {
 
   $scope.signedIn = false;
 
@@ -141,6 +211,7 @@ playlister.controller('SignedInCtrl', function ($scope, $http) {
 
     $scope.signedIn = data.status;
     $scope.userId = data.id;
+    $rootScope.username = data.id;
 
     $scope.show_state = true;
   });
@@ -182,7 +253,6 @@ playlister.controller('ClonerPageCtrl', function ($scope, $http, $rootScope) {
     if ($scope.playlistId.length < 6) { return; }
 
     $http.post('/api/v1/cloner/clone?playlist='+$scope.playlistId).success(function (data) {
-      console.log(data);
       $scope.result = data.results;
     });
   }

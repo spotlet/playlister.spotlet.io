@@ -1,1 +1,12 @@
 <h1>SpotCast</h1>
+
+<button class="btn btn-primary" ng-click="enableFollow()">Follow Spotcast</button>
+<button class="btn btn-primary" ng-click="enableSpotcaster()">Enable Spotcast</button>
+
+<h2 ng-show="isPlaying">{{track.name}} <small>by <a href="{{artist.location.og}}">{{artist.name}}</a></small></h2>
+
+<div class="progress" ng-show="isPlaying">
+  <div class="progress-bar" role="progressbar" aria-valuenow="{{percentComplete}}" aria-valuemin="0" aria-valuemax="100" style="width: {{percentComplete}}%;">
+    <span class="sr-only">{{percentComplete}}% Complete</span>
+  </div>
+</div>

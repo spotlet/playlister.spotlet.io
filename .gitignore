@@ -34,3 +34,4 @@ Gemfile.lock
 .rvmrc
 site/public/main*
 components/
+node_modules/

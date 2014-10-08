@@ -1,0 +1,9 @@
+{
+  "name": "Playlister-SpotCast",
+  "version": "0.0.1",
+  "description": "Relay to listeners what someone is listening to.",
+  "dependencies": {
+    "express": "^4.9.5",
+    "socket.io": "^1.1.0"
+  }
+}
