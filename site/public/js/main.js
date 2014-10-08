@@ -94,12 +94,23 @@ playlister.controller('SpotcastPageCtrl', function ($scope, $rootScope, $interva
   $scope.track = {};
   $scope.album = {};
   $scope.spotcaster = false;
+  $scope.spotcasts = {};
+
+  if (!$scope.socket) {
+      $scope.socket = io('http://playlister.spotlet.io:3000');
+  }
+
+  $scope.socket.on('spotcasts', function (spotcasts) {
+    console.log(spotcasts);
+    $scope.spotcasts = spotcasts;
+  });
 
   $scope.enableFollow = function () {
-    console.log('enable follow');
-      $scope.socket = io('http://playlister.spotlet.io:3000');
-      $scope.socket.emit('join', 'solomonjames');
-      $scope.socket.on('spotcasting', function(data) {
+      console.log('enable follow');
+
+      $scope.socket.emit('spotcast-follow', {follow: 'solomonjames', follower: $rootScope.username});
+
+      $scope.socket.on('spotcasting-followers', function(data) {
           $scope.isPlaying = data.playing;
           $scope.trackLength = data.track.length;
           $scope.trackPosition = data.playing_position;
@@ -117,8 +128,7 @@ playlister.controller('SpotcastPageCtrl', function ($scope, $rootScope, $interva
 
   $scope.enableSpotcaster = function () {
     $scope.spotcaster = true;
-    $scope.socket = io('http://playlister.spotlet.io:3000');
-    $scope.socket.emit('join', 'solomonjames');
+    $scope.socket.emit('spotcasting-start', $rootScope.username);
   };
 
   $scope.stopStatus = $interval(function () {

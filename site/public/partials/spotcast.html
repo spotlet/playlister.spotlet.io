@@ -1,5 +1,9 @@
 <h1>SpotCast</h1>
 
+<ul>
+    <li ng-repeat="(owner, cast) in spotcasts">{{owner}}</li>
+</ul>
+
 <button class="btn btn-primary" ng-click="enableFollow()">Follow Spotcast</button>
 <button class="btn btn-primary" ng-click="enableSpotcaster()">Enable Spotcast</button>
 
