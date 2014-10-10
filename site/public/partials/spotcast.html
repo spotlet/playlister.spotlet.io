@@ -1,11 +1,20 @@
 <h1 class="page-header">SpotCast&#8482;</h1>
 
+<small>I promise... this is a very early stage beta app. If you like the concept, please check by often to see how it progresses.</small>
+
 <p ng-if="spotcasts.length == 0">
     There doesn't seem to be anyone SpotCasting right now, why don't you be the first!?
 </p>
 
-<button class="btn btn-primary" ng-disabled="isFollowing" ng-click="enableSpotcaster()" ng-if="spotcaster == false">Start SpotCasting</button>
-<button class="btn btn-primary" ng-click="disableSpotcaster()" ng-if="spotcaster == true">Stop SpotCasting</button>
+<div>
+    <div ng-if="spotcaster != true && isFollowing != true">
+        <button class="btn btn-primary" ng-disabled="isFollowing" ng-click="enableSpotcaster()" ng-if="spotcaster == false">Start SpotCasting</button>
+    </div>
+
+    <div ng-if="spotcaster == true">
+        <button class="btn btn-primary" ng-click="disableSpotcaster()" ng-if="spotcaster == true">Stop SpotCasting</button>
+    </div>
+</div>
 
 <table class="table" ng-if="spotcasts">
     <thead>
