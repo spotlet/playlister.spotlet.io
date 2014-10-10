@@ -92,6 +92,10 @@ io.on('connection', function(socket) {
     });
 
     socket.on('disconnect', function() {
+        if (followers == undefined) {
+            followers = {};
+        }
+
         if (followers[socket.username]) {
             var following = followers[socket.username];
             var index = spotcasts[following].followers.indexOf(socket.username);
