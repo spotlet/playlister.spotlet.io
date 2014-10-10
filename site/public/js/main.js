@@ -87,6 +87,8 @@ playlister.config(['$routeProvider', function($routeProvider) {
 playlister.controller('SpotcastPageCtrl', function ($scope, $rootScope, $interval, spotify, $window) {
   $rootScope.pageTitle = 'SpotCast';
 
+  var statusPollId = false;
+
   $scope.isPlaying = false;
   $scope.trackLength = 0;
   $scope.trackPosition = 0;
@@ -94,48 +96,102 @@ playlister.controller('SpotcastPageCtrl', function ($scope, $rootScope, $interva
   $scope.track = {};
   $scope.album = {};
   $scope.spotcaster = false;
-  $scope.spotcasts = {};
+  $scope.spotcasts = [];
+  $scope.isFollowing = false;
+  $scope.followQueue = [];
+  $window.followQueue = $scope.followQueue;
+  $window.spotcasts = $scope.spotcasts;
 
   if (!$scope.socket) {
       $scope.socket = io('http://playlister.spotlet.io:3000');
   }
 
   $scope.socket.on('spotcasts', function (spotcasts) {
-    console.log(spotcasts);
-    $scope.spotcasts = spotcasts;
+    $scope.spotcasts = [];
+    angular.forEach(spotcasts, function (value, key) {
+        $scope.spotcasts.push(value);
+    });
+
+    // force a new execution
+    $scope.$apply();
+    console.log($scope.spotcasts);
+    $window.spotcasts = $scope.spotcasts;
   });
 
-  $scope.enableFollow = function () {
+  $scope.disableFollow = function (username) {
+    $scope.socket.emit('spotcast-unfollow', username);
+    $scope.isFollowing = false;
+    $scope.stopStatus();
+  };
+
+  $scope.enableFollow = function (username) {
       console.log('enable follow');
 
-      $scope.socket.emit('spotcast-follow', {follow: 'solomonjames', follower: $rootScope.username});
+      $scope.startStatus($interval, $scope, spotify, $rootScope);
+      $scope.isFollowing = username;
+
+      $scope.socket.emit('spotcast-follow', {follow: username, follower: $rootScope.username});
+
+      $scope.$watch('percentComplete', function (newVal, oldVal) {
+          if (newVal < 99) {
+            return;
+          }
+
+          console.log('[DEBUG] Playing the next song queuedd up');
+          var next = $scope.followQueue.shift();
+          spotify.play(next);
+          return;
+      });
+
 
       $scope.socket.on('spotcasting-followers', function(data) {
-          $scope.isPlaying = data.playing;
-          $scope.trackLength = data.track.length;
-          $scope.trackPosition = data.playing_position;
-          $scope.percentComplete = (data.playing_position/data.track.length)*100;
-          $scope.artist = data.track.artist_resource;
-          $scope.artistName = data.track.artist_resource.name;
-          $scope.track = data.track.track_resource;
-          $scope.album = data.track.album_resource;
+          if (
+                // Are you already listening to someting? We wont stop it, so we will queue it up
+                $scope.isPlaying
+                && data.track.track_resource.uri != $scope.track.uri
+
+                // Is this already in the queue?
+                && $scope.followQueue.indexOf(data.track.track_resource.uri) == -1
+            ) {
+              //queue up the next song here
+              console.log('queuing up next song');
+              $scope.followQueue.push(data.track.track_resource.uri);
+
+              // For debugging
+              $window.followQueue = $scope.followQueue;
+          }
+
+          if ($scope.isPlaying == false) {
+              console.log('spotify is not playing anything right now, so starting a song');
+              spotify.play(data.track.track_resource.uri);
+          }
       });
   };
 
-  $scope.listRooms = function () {
-    // $scope.socket.emit('rooms'
+  $scope.disableSpotcaster = function () {
+    $scope.spotcaster = false;
+    $scope.stopStatus();
+    $scope.socket.emit('spotcasting-stop', $rootScope.username);
   };
 
   $scope.enableSpotcaster = function () {
     $scope.spotcaster = true;
+    $scope.startStatus($interval, $scope, spotify, $rootScope);
     $scope.socket.emit('spotcasting-start', $rootScope.username);
   };
 
-  $scope.stopStatus = $interval(function () {
+  $scope.stopStatus = function () {
+    $interval.cancel(statusPollId);
+    statusPollId = false;
+  }
+
+  $scope.startStatus = function ($interval, $scope, spotify, $rootScope) {
+    statusPollId = $interval(function () {
       spotify.status().end(function (error, res) {
 
-          if ($scope.spotcaster) {
+            if ($scope.spotcaster) {
               $scope.socket.emit('spotcasting', angular.extend(res.body, {username: $rootScope.username}));
+            }
 
               $scope.isPlaying = res.body.playing;
               $scope.trackLength = res.body.track.length;
@@ -145,9 +201,9 @@ playlister.controller('SpotcastPageCtrl', function ($scope, $rootScope, $interva
               $scope.artistName = res.body.track.artist_resource.name;
               $scope.track = res.body.track.track_resource;
               $scope.album = res.body.track.album_resource;
-          }
       });
-  }, 1000);
+    }, 1000);
+  }
 });
 
 playlister.controller('HomePageCtrl', function ($scope, $http, $log, $rootScope) {

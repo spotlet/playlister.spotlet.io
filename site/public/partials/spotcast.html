@@ -1,16 +1,40 @@
-<h1>SpotCast</h1>
+<h1 class="page-header">SpotCast&#8482;</h1>
 
-<ul>
-    <li ng-repeat="(owner, cast) in spotcasts">{{owner}}</li>
-</ul>
+<p ng-if="spotcasts.length == 0">
+    There doesn't seem to be anyone SpotCasting right now, why don't you be the first!?
+</p>
 
-<button class="btn btn-primary" ng-click="enableFollow()">Follow Spotcast</button>
-<button class="btn btn-primary" ng-click="enableSpotcaster()">Enable Spotcast</button>
+<button class="btn btn-primary" ng-disabled="isFollowing" ng-click="enableSpotcaster()" ng-if="spotcaster == false">Start SpotCasting</button>
+<button class="btn btn-primary" ng-click="disableSpotcaster()" ng-if="spotcaster == true">Stop SpotCasting</button>
 
-<h2 ng-show="isPlaying">{{track.name}} <small>by <a href="{{artist.location.og}}">{{artist.name}}</a></small></h2>
-
-<div class="progress" ng-show="isPlaying">
-  <div class="progress-bar" role="progressbar" aria-valuenow="{{percentComplete}}" aria-valuemin="0" aria-valuemax="100" style="width: {{percentComplete}}%;">
-    <span class="sr-only">{{percentComplete}}% Complete</span>
-  </div>
-</div>
+<table class="table" ng-if="spotcasts">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Currently Playing</th>
+            <th>Previously played</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="cast in spotcasts">
+            <td>{{cast.owner}}</td>
+            <td>
+                <a href="{{cast.current.track.track_resource.location.og}}">{{cast.current.track.track_resource.name}}</a>
+                by
+                <a href="{{cast.current.track.artist_resource.location.og}}">{{cast.current.track.artist_resource.name}}</a>
+            </td>
+            <td>
+                <div ng-if="cast.previous.track">
+                    <a href="{{cast.previous.track.track_resource.location.og}}">{{cast.previous.track.track_resource.name}}</a>
+                    by
+                    <a href="{{cast.previous.track.artist_resource.location.og}}">{{cast.previous.track.artist_resource.name}}</a>
+                </div>
+            </td>
+            <td>
+                <button type="button" class="btn btn-primary btn-sm" ng-click="enableFollow(cast.owner)" ng-if="isFollowing != cast.owner">Follow Spotcast</button>
+                <button type="button" class="btn btn-danger btn-sm" ng-click="disableFollow(cast.owner)" ng-if="isFollowing == cast.owner">Stop Following</button>
+            </td>
+        </tr>
+    </tbody>
+</table>
